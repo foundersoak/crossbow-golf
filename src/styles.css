@@ -1441,6 +1441,12 @@ input[type='range'] {
   fill: var(--green-deep);
 }
 
+.medal-outline {
+  fill: none;
+  stroke: var(--green-deep);
+  stroke-width: 2px;
+}
+
 .medal-ticks line {
   stroke: var(--green-deep);
   stroke-width: 1;
