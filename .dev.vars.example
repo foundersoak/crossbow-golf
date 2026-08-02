@@ -10,3 +10,8 @@ PROPERTY_DEFAULT_ZOOM=18
 
 # Family invite code used on first launch. Pick a long random phrase.
 INVITE_CODE=replace-with-a-long-random-phrase
+
+# Alternative: instead of the seven PROPERTY_* lines above, you can set a
+# single PROPERTY_CONFIG secret whose value is a JSON object with the same
+# keys. Handy when adding secrets from a phone. Individual vars win if both
+# are set.

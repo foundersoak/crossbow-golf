@@ -16,6 +16,18 @@ export interface MapConfig {
  * client can render a readable failure rather than a map of the ocean.
  */
 export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
+  // A single PROPERTY_CONFIG JSON secret may carry every value, so mobile
+  // setup is one paste. Individually set vars win over the JSON.
+  let bundle: Record<string, unknown> = {}
+  if (env.PROPERTY_CONFIG) {
+    try {
+      const parsed: unknown = JSON.parse(env.PROPERTY_CONFIG)
+      if (parsed && typeof parsed === 'object') bundle = parsed as Record<string, unknown>
+    } catch {
+      return { missing: ['PROPERTY_CONFIG is set but is not valid JSON'] }
+    }
+  }
+
   const names = [
     'PROPERTY_CENTER_LAT',
     'PROPERTY_CENTER_LNG',
@@ -28,7 +40,7 @@ export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
   const missing: string[] = []
   const values: Record<string, number> = {}
   for (const name of names) {
-    const raw = env[name]
+    const raw = env[name] ?? bundle[name]
     const parsed = raw === undefined || raw === '' ? NaN : Number(raw)
     if (!Number.isFinite(parsed)) missing.push(name)
     else values[name] = parsed
@@ -42,7 +54,7 @@ export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
     return { missing: ['PROPERTY_* values are not valid coordinates'] }
   }
 
-  const zoomRaw = Number(env.PROPERTY_DEFAULT_ZOOM ?? '18')
+  const zoomRaw = Number(env.PROPERTY_DEFAULT_ZOOM ?? bundle.PROPERTY_DEFAULT_ZOOM ?? '18')
   const defaultZoom = Number.isFinite(zoomRaw) ? zoomRaw : 18
 
   return { center, bounds: { ne, sw }, defaultZoom }

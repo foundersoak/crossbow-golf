@@ -47,6 +47,8 @@ npm run deploy
 bash scripts/push-secrets.sh
 ```
 
+No terminal handy? Secrets can also be added in the dashboard: the Worker, then Settings, then Variables and Secrets, each added as type "Secret". The quick mobile path is two secrets: `INVITE_CODE`, plus `PROPERTY_CONFIG` whose value is a single JSON object carrying all seven property values under their standard names (`PROPERTY_CENTER_LAT`, `PROPERTY_CENTER_LNG`, `PROPERTY_BOUNDS_NE_LAT`, `PROPERTY_BOUNDS_NE_LNG`, `PROPERTY_BOUNDS_SW_LAT`, `PROPERTY_BOUNDS_SW_LNG`, `PROPERTY_DEFAULT_ZOOM`). Individual secrets win over the JSON if both are set.
+
 Open the printed URL on your phone. Until step 8 runs, the app shows a readable "map not configured" screen; after it, the satellite map of the ranch.
 
 ## First run
