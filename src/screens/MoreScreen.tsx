@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { apiGet, apiSend } from '../lib/api'
 import type { RosterEntry } from '../../shared/types'
+import CountyMedallion from '../components/CountyMedallion'
 
 export default function MoreScreen() {
   const { player, logout } = useAuth()
@@ -10,7 +11,10 @@ export default function MoreScreen() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>More</h1>
+        <div className="page-head-brand">
+          <CountyMedallion className="medallion-stamp" />
+          <h1>More</h1>
+        </div>
       </header>
       <p className="muted">
         Signed in as <strong>{player?.name}</strong>

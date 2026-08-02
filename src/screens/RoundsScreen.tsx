@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { apiGet } from '../lib/api'
+import CountyMedallion from '../components/CountyMedallion'
 
 interface RoundListItem {
   id: string
@@ -29,7 +30,10 @@ export default function RoundsScreen() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>Rounds</h1>
+        <div className="page-head-brand">
+          <CountyMedallion className="medallion-stamp" />
+          <h1>Rounds</h1>
+        </div>
         <Link className="btn btn-primary" to="/rounds/new">
           Start a round
         </Link>

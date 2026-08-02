@@ -1432,6 +1432,32 @@ input[type='range'] {
   margin-bottom: 0.75rem;
 }
 
+/* Brand mark reused beyond the gate: auth splash and page-header stamps. */
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.splash-medallion {
+  width: min(52vw, 210px);
+  margin-bottom: 0;
+}
+
+.page-head-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.medallion-stamp {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
 .medal-ring {
   fill: none;
   stroke: var(--green-deep);

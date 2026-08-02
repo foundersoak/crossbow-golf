@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiGet } from '../lib/api'
 import type { LayoutSummary } from '../../shared/types'
+import CountyMedallion from '../components/CountyMedallion'
 
 type Tab = 'leaderboard' | 'holes' | 'records'
 
@@ -42,7 +43,10 @@ export default function BoardsScreen() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>Boards</h1>
+        <div className="page-head-brand">
+          <CountyMedallion className="medallion-stamp" />
+          <h1>Boards</h1>
+        </div>
       </header>
 
       <div className="tab-row">

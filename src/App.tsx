@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/auth'
 import Shell from './components/Shell'
+import CountyMedallion from './components/CountyMedallion'
 import GateScreen from './screens/GateScreen'
 import MapScreen from './screens/MapScreen'
 import EditScreen from './screens/EditScreen'
@@ -29,7 +30,10 @@ function Gated() {
   if (loading) {
     return (
       <div className="screen-center">
-        <p className="muted">Warming up…</p>
+        <div className="splash">
+          <CountyMedallion className="medallion splash-medallion" />
+          <p className="muted">Warming up…</p>
+        </div>
       </div>
     )
   }
