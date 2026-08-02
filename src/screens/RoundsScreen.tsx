@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { apiGet } from '../lib/api'
 import CountyMedallion from '../components/CountyMedallion'
+import Colophon from '../components/Colophon'
 
 interface RoundListItem {
   id: string
@@ -96,6 +97,7 @@ export default function RoundsScreen() {
           </li>
         ))}
       </ul>
+      <Colophon />
     </div>
   )
 }

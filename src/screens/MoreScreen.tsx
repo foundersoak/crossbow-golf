@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth'
 import { apiGet, apiSend } from '../lib/api'
 import type { RosterEntry } from '../../shared/types'
 import CountyMedallion from '../components/CountyMedallion'
+import Colophon from '../components/Colophon'
 
 export default function MoreScreen() {
   const { player, logout } = useAuth()
@@ -44,6 +45,7 @@ export default function MoreScreen() {
       <button className="btn btn-block" onClick={() => void logout()}>
         Sign out on this device
       </button>
+      <Colophon />
     </div>
   )
 }

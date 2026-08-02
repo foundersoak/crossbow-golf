@@ -81,6 +81,48 @@ img {
   padding: 1rem 1rem calc(2rem + env(safe-area-inset-bottom, 0px));
   max-width: 40rem;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.page > * {
+  flex-shrink: 0;
+}
+
+/* Architect's credit at the foot of list pages. margin-top auto lets it
+   drop into leftover space when the content is short. */
+.colophon {
+  margin-top: auto;
+  padding-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.colophon-orn {
+  color: var(--green-deep);
+  font-size: 0.65rem;
+  letter-spacing: 0.7em;
+  padding-left: 0.7em;
+  opacity: 0.65;
+}
+
+.colophon-credit {
+  font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+}
+
+.colophon-sub {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 
 .page-head {
@@ -1021,6 +1063,14 @@ button {
   font-size: 0.95rem;
 }
 
+/* Score cells need room for the notation marks so rings never touch
+   cell borders or each other. */
+.scorecard tbody td {
+  padding: 7px 5px;
+  min-width: 40px;
+  height: 44px;
+}
+
 .scorecard thead th {
   background: var(--green-deep);
   color: #fff;
@@ -1057,14 +1107,16 @@ button {
 }
 
 /* Classic golf notation: circled scores under par, squared over par,
-   doubled marks for eagle / double bogey and worse, gold fill for an ace. */
+   doubled marks for eagle / double bogey and worse, gold fill for an ace.
+   Marks stay inside their cell — the doubled ring is drawn inward with a
+   second border-box shadow rather than outward past the cell edge. */
 .score-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 26px;
   height: 26px;
-  margin: -3px 0;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1077,7 +1129,7 @@ button {
 }
 
 .cell-eagle .score-mark {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--accent);
+  box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 3.5px var(--accent);
 }
 
 .cell-over .score-mark,
@@ -1087,7 +1139,7 @@ button {
 }
 
 .cell-dblover .score-mark {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--ink);
+  box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 3.5px var(--ink);
 }
 
 .cell-ace .score-mark {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { apiGet } from '../lib/api'
 import type { LayoutSummary } from '../../shared/types'
 import CountyMedallion from '../components/CountyMedallion'
+import Colophon from '../components/Colophon'
 
 type Tab = 'leaderboard' | 'holes' | 'records'
 
@@ -112,6 +113,7 @@ export default function BoardsScreen() {
       {layouts.length === 0 && (
         <p className="muted">Boards light up once a layout is published and rounds are completed.</p>
       )}
+      <Colophon />
     </div>
   )
 }
