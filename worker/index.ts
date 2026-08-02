@@ -24,6 +24,19 @@ import {
   handleRotateInviteCode,
   handleSetAdmin
 } from './api/admin'
+import {
+  handleCompleteRound,
+  handleCreateRound,
+  handleGetRound,
+  handleJoinClaim,
+  handleJoinInfo,
+  handleListRounds,
+  handlePostEvents,
+  handleReopenRound,
+  handleRoundSocket
+} from './api/rounds'
+
+export { RoundRoom } from './do/RoundRoom'
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -87,6 +100,28 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   {
     const m = pathname.match(/^\/api\/layouts\/([A-Za-z0-9]+)$/)
     if (m && method === 'GET') return handleLayoutById(env, session, m[1])
+  }
+
+  // Rounds and live scoring
+  if (pathname === '/api/rounds' && method === 'POST')
+    return handleCreateRound(request, env, session)
+  if (pathname === '/api/rounds' && method === 'GET') return handleListRounds(env, session)
+  {
+    const m = pathname.match(/^\/api\/rounds\/([A-Za-z0-9]+)(\/[a-z]+)?$/)
+    if (m) {
+      const [, roundId, sub] = m
+      if (!sub && method === 'GET') return handleGetRound(env, session, roundId)
+      if (sub === '/events' && method === 'POST')
+        return handlePostEvents(request, env, session, roundId)
+      if (sub === '/ws' && method === 'GET')
+        return handleRoundSocket(request, env, session, roundId)
+      if (sub === '/complete' && method === 'POST')
+        return handleCompleteRound(env, session, roundId)
+      if (sub === '/reopen' && method === 'POST') return handleReopenRound(env, session, roundId)
+    }
+    const j = pathname.match(/^\/api\/join\/([A-Za-z0-9]+)$/)
+    if (j && method === 'GET') return handleJoinInfo(env, j[1])
+    if (j && method === 'POST') return handleJoinClaim(request, env, session, j[1], url)
   }
 
   // Media

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/auth'
 import Shell from './components/Shell'
 import GateScreen from './screens/GateScreen'
@@ -7,6 +7,10 @@ import EditScreen from './screens/EditScreen'
 import LayoutsScreen from './screens/LayoutsScreen'
 import MoreScreen from './screens/MoreScreen'
 import StubScreen from './screens/StubScreen'
+import RoundsScreen from './screens/RoundsScreen'
+import NewRoundScreen from './screens/NewRoundScreen'
+import RoundScreen from './screens/RoundScreen'
+import JoinScreen from './screens/JoinScreen'
 
 export default function App() {
   return (
@@ -18,12 +22,23 @@ export default function App() {
 
 function Gated() {
   const { loading, player } = useAuth()
+  const location = useLocation()
 
   if (loading) {
     return (
       <div className="screen-center">
         <p className="muted">Warming up…</p>
       </div>
+    )
+  }
+
+  // Round links work without a prior session: the join code in the link is
+  // the capability, and joining mints the device session.
+  if (location.pathname.startsWith('/r/')) {
+    return (
+      <Routes>
+        <Route path="/r/:code" element={<JoinScreen />} />
+      </Routes>
     )
   }
 
@@ -35,10 +50,9 @@ function Gated() {
         <Route path="/" element={<MapScreen />} />
         <Route path="/edit" element={<EditScreen />} />
         <Route path="/layouts" element={<LayoutsScreen />} />
-        <Route
-          path="/rounds"
-          element={<StubScreen title="Rounds" note="Live scoring arrives in the next phase." />}
-        />
+        <Route path="/rounds" element={<RoundsScreen />} />
+        <Route path="/rounds/new" element={<NewRoundScreen />} />
+        <Route path="/rounds/:id" element={<RoundScreen />} />
         <Route
           path="/boards"
           element={

@@ -8,6 +8,10 @@
     "run_worker_first": ["/api/*"]
   },
   "observability": { "enabled": true },
+  "durable_objects": {
+    "bindings": [{ "name": "ROUND_ROOMS", "class_name": "RoundRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["RoundRoom"] }],
   "d1_databases": [
     {
       "binding": "DB",

@@ -2,6 +2,7 @@ export interface Env {
   DB: D1Database
   MEDIA: R2Bucket
   ASSETS: Fetcher
+  ROUND_ROOMS: DurableObjectNamespace
 
   // Property location. Set via .dev.vars locally and `wrangler secret put`
   // in production. Never committed, never baked into the client bundle.
