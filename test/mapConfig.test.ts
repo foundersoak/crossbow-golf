@@ -60,3 +60,27 @@ describe('readMapConfig with a PROPERTY_CONFIG bundle', () => {
     }
   })
 })
+
+describe('readMapConfig diagnostics', () => {
+  it('unwraps a double-encoded JSON string value', () => {
+    const doubleEncoded = JSON.stringify(JSON.stringify(BUNDLE))
+    const result = readMapConfig(envWith(doubleEncoded))
+    expect('missing' in result).toBe(false)
+  })
+
+  it('names the visible keys when the bundle has wrong keys', () => {
+    const result = readMapConfig(envWith(JSON.stringify({ CENTER: '1' })))
+    expect('missing' in result).toBe(true)
+    if ('missing' in result) {
+      expect(result.missing.join(' ')).toContain('contains these keys: CENTER')
+    }
+  })
+
+  it('points at a missing or misnamed secret when nothing is set', () => {
+    const result = readMapConfig({} as unknown as Env)
+    expect('missing' in result).toBe(true)
+    if ('missing' in result) {
+      expect(result.missing.join(' ')).toContain('no PROPERTY_CONFIG secret is visible')
+    }
+  })
+})

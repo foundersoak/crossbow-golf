@@ -29,7 +29,10 @@ export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
       .replace(/\u00A0/g, ' ') // non-breaking space
       .trim()
     try {
-      const parsed: unknown = JSON.parse(cleaned)
+      let parsed: unknown = JSON.parse(cleaned)
+      // A value saved with an extra layer of quoting parses to a string of
+      // JSON; unwrap it instead of silently ignoring it.
+      if (typeof parsed === 'string') parsed = JSON.parse(parsed)
       if (parsed && typeof parsed === 'object') bundle = parsed as Record<string, unknown>
     } catch {
       return {
@@ -57,7 +60,23 @@ export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
     if (!Number.isFinite(parsed)) missing.push(name)
     else values[name] = parsed
   }
-  if (missing.length > 0) return { missing }
+  if (missing.length > 0) {
+    // Say exactly what the server can see, so a phone-side fix is obvious.
+    // Key names only; never values.
+    if (!env.PROPERTY_CONFIG) {
+      missing.push(
+        'Note: no PROPERTY_CONFIG secret is visible. If you added one, check the name is exactly PROPERTY_CONFIG.'
+      )
+    } else {
+      const keys = Object.keys(bundle)
+      missing.push(
+        keys.length === 0
+          ? 'Note: PROPERTY_CONFIG parsed as JSON but is not an object with the expected keys.'
+          : `Note: PROPERTY_CONFIG contains these keys: ${keys.join(', ')}`
+      )
+    }
+    return { missing }
+  }
 
   const center = { lat: values.PROPERTY_CENTER_LAT, lng: values.PROPERTY_CENTER_LNG }
   const ne = { lat: values.PROPERTY_BOUNDS_NE_LAT, lng: values.PROPERTY_BOUNDS_NE_LNG }
