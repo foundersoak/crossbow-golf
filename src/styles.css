@@ -1066,8 +1066,20 @@ button {
 /* Score cells need room for the notation marks so rings never touch
    cell borders or each other. */
 .scorecard tbody td {
+  position: relative;
   padding: 7px 2px;
   height: 44px;
+}
+
+/* The entered-by-someone-else asterisk pins to the cell corner instead
+   of flowing next to the mark — in narrow fixed-layout columns it would
+   otherwise wrap under the score and stretch the row. */
+.scorecard .attribution-mark {
+  position: absolute;
+  top: 2px;
+  right: 1px;
+  font-size: 0.62rem;
+  line-height: 1;
 }
 
 .scorecard thead th {
