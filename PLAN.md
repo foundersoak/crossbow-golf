@@ -47,6 +47,7 @@ Sources: [DO free tier changelog](https://developers.cloudflare.com/changelog/po
 - **Data placement.** The round Durable Object is the authority while a round is live: it holds the scorecard state and the append-only event log in its own SQLite storage. Every accepted event is also written through to D1 asynchronously with retry, and completing a round finalizes it in D1. Leaderboards, records, profiles, and layout history read only from D1. Course layouts, drafts, players, and sessions live only in D1 (no realtime need).
 - **R2** stores hole photos and the drone overlay image. Nothing binary in the repo or D1.
 - **Tests** run under Vitest with `@cloudflare/vitest-pool-workers`, which can instantiate the real DO class in tests. The reconnect scenario from the brief becomes an automated integration test (section 5).
+- **Hard constraint: $0/month.** Everything in this plan runs on free tiers with no credit card on file. Concretely: Cloudflare free plan (Workers, DO, D1, R2 all have free quotas with orders-of-magnitude headroom at 15 users, and nothing pauses when idle), the free `workers.dev` URL instead of a custom domain, keyless Esri imagery (moving to Esri's free-key tier only if the keyless endpoint tightens), public-domain NAIP, and no email or auth service. The Google Maps layer stays unwired by default partly because enabling it requires a card on file. Any future change that would introduce a cost or require payment details gets flagged for explicit sign-off first, not made silently.
 
 ---
 
