@@ -36,6 +36,13 @@ import {
   handleRoundSocket
 } from './api/rounds'
 
+import {
+  handleHoleStats,
+  handleLeaderboard,
+  handlePlayerProfile,
+  handleRecords
+} from './api/stats'
+
 export { RoundRoom } from './do/RoundRoom'
 
 export default {
@@ -122,6 +129,17 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
     const j = pathname.match(/^\/api\/join\/([A-Za-z0-9]+)$/)
     if (j && method === 'GET') return handleJoinInfo(env, j[1])
     if (j && method === 'POST') return handleJoinClaim(request, env, session, j[1], url)
+  }
+
+  // Stats
+  if (pathname === '/api/stats/leaderboard' && method === 'GET')
+    return handleLeaderboard(env, session, url)
+  if (pathname === '/api/stats/holes' && method === 'GET')
+    return handleHoleStats(env, session, url)
+  if (pathname === '/api/stats/records' && method === 'GET') return handleRecords(env, session)
+  {
+    const m = pathname.match(/^\/api\/stats\/player\/([A-Za-z0-9]+)$/)
+    if (m && method === 'GET') return handlePlayerProfile(env, session, m[1])
   }
 
   // Media

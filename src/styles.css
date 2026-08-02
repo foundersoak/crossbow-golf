@@ -1080,3 +1080,123 @@ button {
   margin-left: 4px;
   vertical-align: super;
 }
+
+/* Boards and profiles */
+
+.tab-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.layout-picker {
+  margin-bottom: 0.5rem;
+}
+
+.cross-layout-note {
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+  font-weight: 650;
+  font-size: 0.9rem;
+}
+
+.board-table-wrap {
+  overflow-x: auto;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  background: #fff;
+  margin: 0.5rem 0 1rem;
+}
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.board-table th,
+.board-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.board-table thead th {
+  background: var(--green-deep);
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.board-table a {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.stat-callouts {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0 1rem;
+}
+
+.stat-callout {
+  flex: 1;
+  min-width: 70px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 850;
+}
+
+.ace-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 850;
+}
+
+.trend-chart svg {
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+}
+
+.trend-line {
+  stroke: var(--green-live);
+  stroke-width: 2.5;
+}
+
+.trend-dot {
+  fill: var(--green-deep);
+}
+
+.trend-par-line {
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}

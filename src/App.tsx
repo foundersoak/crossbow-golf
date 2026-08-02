@@ -6,11 +6,12 @@ import MapScreen from './screens/MapScreen'
 import EditScreen from './screens/EditScreen'
 import LayoutsScreen from './screens/LayoutsScreen'
 import MoreScreen from './screens/MoreScreen'
-import StubScreen from './screens/StubScreen'
 import RoundsScreen from './screens/RoundsScreen'
 import NewRoundScreen from './screens/NewRoundScreen'
 import RoundScreen from './screens/RoundScreen'
 import JoinScreen from './screens/JoinScreen'
+import BoardsScreen from './screens/BoardsScreen'
+import ProfileScreen from './screens/ProfileScreen'
 
 export default function App() {
   return (
@@ -53,12 +54,8 @@ function Gated() {
         <Route path="/rounds" element={<RoundsScreen />} />
         <Route path="/rounds/new" element={<NewRoundScreen />} />
         <Route path="/rounds/:id" element={<RoundScreen />} />
-        <Route
-          path="/boards"
-          element={
-            <StubScreen title="Boards" note="Leaderboards and records arrive in a later phase." />
-          }
-        />
+        <Route path="/boards" element={<BoardsScreen />} />
+        <Route path="/players/:id" element={<ProfileScreen />} />
         <Route path="/more" element={<MoreScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
