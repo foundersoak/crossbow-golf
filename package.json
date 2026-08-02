@@ -11,7 +11,7 @@
     "test:unit": "vitest run",
     "test:worker": "vitest run -c test/worker/vitest.config.ts",
     "test:watch": "vitest",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "npm run build && wrangler deploy -c dist/crossbow_golf/wrangler.json",
     "typecheck": "tsc -b",
     "db:migrate:local": "wrangler d1 migrations apply crossbow-golf --local",
     "db:migrate:remote": "wrangler d1 migrations apply crossbow-golf --remote"

@@ -18,6 +18,8 @@ export default function MapScreen() {
     () => localStorage.getItem(OVERLAY_PREF) !== 'off'
   )
 
+  const [liveRound, setLiveRound] = useState<{ id: string; playerNames: string } | null>(null)
+
   useEffect(() => {
     apiGet<LayoutData | null>('/api/layouts/current')
       .then(setLayout)
@@ -25,6 +27,12 @@ export default function MapScreen() {
     apiGet<OverlayData | null>('/api/overlays/active')
       .then(setOverlay)
       .catch(() => setOverlay(null))
+    apiGet<{ id: string; status: string; playerNames: string }[]>('/api/rounds')
+      .then((rounds) => {
+        const active = rounds.find((r) => r.status === 'active')
+        setLiveRound(active ? { id: active.id, playerNames: active.playerNames } : null)
+      })
+      .catch(() => {})
   }, [])
 
   if (configState.kind === 'loading') {
@@ -101,6 +109,12 @@ export default function MapScreen() {
             </Link>
           )}
         </div>
+      )}
+      {liveRound && !selected && (
+        <Link className="live-round-banner" to={`/rounds/${liveRound.id}`}>
+          <span className="live-pulse" aria-hidden />
+          Round in progress · {liveRound.playerNames} · tap to open
+        </Link>
       )}
       {selected && <HoleSheet hole={selected} onClose={() => setSelectedHoleId(null)} />}
     </div>

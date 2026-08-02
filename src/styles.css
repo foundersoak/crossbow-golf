@@ -1230,3 +1230,41 @@ input[type='range'] {
   accent-color: var(--green-deep);
   min-height: var(--tap);
 }
+
+.live-round-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 850;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green-deep);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 750;
+  font-size: 0.9rem;
+  text-decoration: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  max-width: calc(100% - 2rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4be37f;
+  animation: pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
