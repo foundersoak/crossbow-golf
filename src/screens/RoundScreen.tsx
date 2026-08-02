@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useRound } from '../lib/roundStore'
-import { apiSend } from '../lib/api'
+import { apiGet, apiSend } from '../lib/api'
 import type { RoundDetail } from '../../shared/protocol'
-import type { HoleData } from '../../shared/types'
+import type { HoleData, OverlayData } from '../../shared/types'
+import HoleSnippet from '../components/HoleSnippet'
 
 export default function RoundScreen() {
   const { id } = useParams<{ id: string }>()
@@ -13,6 +14,13 @@ export default function RoundScreen() {
   const [currentHole, setCurrentHole] = useState<number | null>(null)
   const [view, setView] = useState<'hole' | 'card'>('hole')
   const [busy, setBusy] = useState(false)
+  const [overlay, setOverlay] = useState<OverlayData | null>(null)
+
+  useEffect(() => {
+    apiGet<OverlayData | null>('/api/overlays/active')
+      .then(setOverlay)
+      .catch(() => setOverlay(null))
+  }, [])
 
   const holes = useMemo(
     () => (state.layout?.holes ?? []).slice().sort((a, b) => a.sortOrder - b.sortOrder),
@@ -173,6 +181,7 @@ export default function RoundScreen() {
             getCell={getCell}
             setScore={setScore}
             pendingCells={state.pendingCells}
+            overlay={overlay}
           />
 
           <div className="hole-nav-row">
@@ -232,7 +241,8 @@ function HoleEntry({
   canEdit,
   getCell,
   setScore,
-  pendingCells
+  pendingCells,
+  overlay
 }: {
   hole: HoleData
   round: RoundDetail
@@ -241,6 +251,7 @@ function HoleEntry({
   getCell: (playerId: string, hole: number) => { strokes: number | null; authorPlayerId: string } | undefined
   setScore: (playerId: string, hole: number, strokes: number | null) => Promise<void>
   pendingCells: Set<string>
+  overlay: OverlayData | null
 }) {
   const nameOf = (id: string) => round.players.find((p) => p.id === id)?.name ?? 'Someone'
   const ordered = [...round.players].sort((a, b) =>
@@ -259,6 +270,8 @@ function HoleEntry({
           </p>
         </div>
       </div>
+
+      <HoleSnippet hole={hole} overlay={overlay} />
 
       {ordered.map((p) => {
         const cell = getCell(p.id, hole.holeNumber)

@@ -9,6 +9,7 @@ import {
 import { holeYards } from '../../shared/geo'
 import type { HoleData, OverlayCorners, OverlayData } from '../../shared/types'
 import { DistortedImageOverlay } from '../lib/distortedOverlay'
+import { teeIcon, pinIcon } from '../lib/mapIcons'
 
 export interface MapConfig {
   center: { lat: number; lng: number }
@@ -31,26 +32,6 @@ interface Props {
   /** Admin alignment mode: draggable corner handles. */
   cornerEditable?: boolean
   onCornersChange?: (corners: OverlayCorners) => void
-}
-
-function teeIcon(holeNumber: number, selected: boolean): L.DivIcon {
-  return L.divIcon({
-    className: '',
-    html: `<div class="tee-marker${selected ? ' marker-selected' : ''}">${holeNumber}</div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15]
-  })
-}
-
-function pinIcon(selected: boolean): L.DivIcon {
-  return L.divIcon({
-    className: '',
-    html: `<div class="pin-marker${selected ? ' marker-selected' : ''}">
-             <div class="pin-flag"></div><div class="pin-stick"></div>
-           </div>`,
-    iconSize: [26, 34],
-    iconAnchor: [4, 32]
-  })
 }
 
 export default function CourseMapView({
