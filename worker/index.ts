@@ -1,31 +1,67 @@
 import type { Env } from './env'
-import { json, errorResponse } from './lib/http'
+import { json, errorResponse, HttpError } from './lib/http'
 import { readMapConfig } from './lib/mapConfig'
+import { getSession, requireSession, touchSession } from './lib/session'
+import {
+  handleClaim,
+  handleEnter,
+  handleLogout,
+  handleMe,
+  handleRoster
+} from './api/auth'
+import {
+  handleCurrentLayout,
+  handleGetDraft,
+  handleLayoutById,
+  handleLayoutList,
+  handlePublishDraft,
+  handleSaveDraft
+} from './api/layouts'
+import { handleServeMedia, handleUpload } from './api/media'
+import {
+  handleAddPlayer,
+  handleRenamePlayer,
+  handleRotateInviteCode,
+  handleSetAdmin
+} from './api/admin'
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
 
     if (url.pathname.startsWith('/api/')) {
-      return handleApi(request, env, url).catch((err) => {
+      try {
+        return await handleApi(request, env, url)
+      } catch (err) {
+        if (err instanceof HttpError) return errorResponse(err.message, err.status)
         console.error('api error', err)
         return errorResponse('Something went wrong on the server.', 500)
-      })
+      }
     }
 
-    // Non-API requests are handled by static assets (SPA fallback).
     return env.ASSETS.fetch(request)
   }
 } satisfies ExportedHandler<Env>
 
 async function handleApi(request: Request, env: Env, url: URL): Promise<Response> {
   const { pathname } = url
+  const method = request.method
 
-  if (pathname === '/api/health') {
-    return json({ ok: true })
-  }
+  if (pathname === '/api/health') return json({ ok: true })
 
-  if (pathname === '/api/config' && request.method === 'GET') {
+  const session = await getSession(request, env)
+  if (session) void touchSession(env, session.tokenHash).catch(() => {})
+
+  // Auth
+  if (pathname === '/api/auth/enter' && method === 'POST') return handleEnter(request, env, url)
+  if (pathname === '/api/me' && method === 'GET') return handleMe(session)
+  if (pathname === '/api/roster' && method === 'GET') return handleRoster(env, session)
+  if (pathname === '/api/auth/claim' && method === 'POST') return handleClaim(request, env, session)
+  if (pathname === '/api/auth/logout' && method === 'POST') return handleLogout(env, session, url)
+
+  // Map config (session required so coordinates stay behind the gate)
+  if (pathname === '/api/config' && method === 'GET') {
+    requireSession(session)
     const config = readMapConfig(env)
     if ('missing' in config) {
       return json(
@@ -38,6 +74,37 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
       )
     }
     return json(config)
+  }
+
+  // Layouts
+  if (pathname === '/api/layouts' && method === 'GET') return handleLayoutList(env, session)
+  if (pathname === '/api/layouts/current' && method === 'GET')
+    return handleCurrentLayout(env, session)
+  if (pathname === '/api/draft' && method === 'GET') return handleGetDraft(env, session)
+  if (pathname === '/api/draft' && method === 'PUT') return handleSaveDraft(request, env, session)
+  if (pathname === '/api/draft/publish' && method === 'POST')
+    return handlePublishDraft(request, env, session)
+  {
+    const m = pathname.match(/^\/api\/layouts\/([A-Za-z0-9]+)$/)
+    if (m && method === 'GET') return handleLayoutById(env, session, m[1])
+  }
+
+  // Media
+  if (pathname === '/api/media' && method === 'POST') return handleUpload(request, env, session)
+  if (pathname.startsWith('/api/media/') && method === 'GET') {
+    return handleServeMedia(env, session, pathname.slice('/api/media/'.length))
+  }
+
+  // Admin
+  if (pathname === '/api/admin/players' && method === 'POST')
+    return handleAddPlayer(request, env, session)
+  if (pathname === '/api/admin/invite-code' && method === 'POST')
+    return handleRotateInviteCode(request, env, session)
+  {
+    const m = pathname.match(/^\/api\/admin\/players\/([A-Za-z0-9]+)\/admin$/)
+    if (m && method === 'POST') return handleSetAdmin(request, env, session, m[1])
+    const r = pathname.match(/^\/api\/admin\/players\/([A-Za-z0-9]+)\/name$/)
+    if (r && method === 'POST') return handleRenamePlayer(request, env, session, r[1])
   }
 
   return errorResponse('Not found.', 404)
