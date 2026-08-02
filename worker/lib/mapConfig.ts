@@ -20,11 +20,23 @@ export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
   // setup is one paste. Individually set vars win over the JSON.
   let bundle: Record<string, unknown> = {}
   if (env.PROPERTY_CONFIG) {
+    // Phone keyboards love to smarten quotes and sneak in invisible
+    // characters; normalize before parsing so a mobile paste just works.
+    const cleaned = env.PROPERTY_CONFIG
+      .replace(/[\u201C\u201D\u201E\u2033]/g, '"') // curly double quotes
+      .replace(/[\u2018\u2019\u2032]/g, "'") // curly single quotes
+      .replace(/[\u200B-\u200D\uFEFF]/g, '') // zero-width chars and BOM
+      .replace(/\u00A0/g, ' ') // non-breaking space
+      .trim()
     try {
-      const parsed: unknown = JSON.parse(env.PROPERTY_CONFIG)
+      const parsed: unknown = JSON.parse(cleaned)
       if (parsed && typeof parsed === 'object') bundle = parsed as Record<string, unknown>
     } catch {
-      return { missing: ['PROPERTY_CONFIG is set but is not valid JSON'] }
+      return {
+        missing: [
+          'PROPERTY_CONFIG is set but is not valid JSON. Re-paste it, making sure it starts with { and ends with } and uses straight quotes.'
+        ]
+      }
     }
   }
 
