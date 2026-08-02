@@ -2,14 +2,17 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../lib/auth'
 import { apiGet } from '../lib/api'
 import type { RosterEntry } from '../../shared/types'
+import CountyShape from '../components/CountyShape'
 
 export default function GateScreen() {
   const { hasSession } = useAuth()
   return (
     <div className="screen-center gate">
+      <CountyShape className="gate-county" />
       <div className="gate-card">
-        <p className="gate-kicker">Crossbow Ranch</p>
-        <h1>Pitch 'n Putt</h1>
+        <p className="gate-kicker">Bosque County, Texas</p>
+        <h1 className="gate-title">Crossbow Ranch</h1>
+        <p className="gate-subtitle">Pitch 'n Putt</p>
         {hasSession ? <ClaimStep /> : <CodeStep />}
       </div>
     </div>

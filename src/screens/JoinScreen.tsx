@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { apiGet, apiSend } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import type { RoundDetail } from '../../shared/protocol'
+import CountyShape from '../components/CountyShape'
 
 interface JoinInfo {
   round: RoundDetail
@@ -72,6 +73,7 @@ export default function JoinScreen() {
 
   return (
     <div className="screen-center gate">
+      <CountyShape className="gate-county" />
       <div className="gate-card">
         <p className="gate-kicker">Round on {info.round.playedOn}</p>
         <h1>Who are you?</h1>

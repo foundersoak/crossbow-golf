@@ -1,7 +1,13 @@
 // Generates the PWA icons as PNGs with zero image dependencies.
-// Draws a flag on a green field, pixel by pixel, and encodes a PNG by hand.
+// Flat design: rolling ranch hill, flagstick with orange flag, cream ball.
+// Rendered at 4x and box-downsampled for smooth edges, encoded by hand.
 import { deflateSync } from 'node:zlib'
 import { mkdirSync, writeFileSync } from 'node:fs'
+
+const INK = [23, 59, 36] // deep green field
+const HILL = [34, 81, 50] // lighter green hill
+const CREAM = [247, 244, 234]
+const FLAG = [200, 69, 31]
 
 function crc32(buf) {
   let table = crc32.table
@@ -28,16 +34,16 @@ function chunk(type, data) {
 }
 
 function encodePng(size, pixels) {
-  const raw = Buffer.alloc((size * 4 + 1) * size)
+  const raw = Buffer.alloc((size * 3 + 1) * size)
   for (let y = 0; y < size; y++) {
-    raw[y * (size * 4 + 1)] = 0
-    pixels.copy(raw, y * (size * 4 + 1) + 1, y * size * 4, (y + 1) * size * 4)
+    raw[y * (size * 3 + 1)] = 0
+    pixels.copy(raw, y * (size * 3 + 1) + 1, y * size * 3, (y + 1) * size * 3)
   }
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(size, 0)
   ihdr.writeUInt32BE(size, 4)
   ihdr[8] = 8 // bit depth
-  ihdr[9] = 6 // RGBA
+  ihdr[9] = 2 // RGB
   return Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
     chunk('IHDR', ihdr),
@@ -46,58 +52,81 @@ function encodePng(size, pixels) {
   ])
 }
 
-function drawIcon(size) {
-  const px = Buffer.alloc(size * size * 4)
-  const set = (x, y, r, g, b) => {
-    if (x < 0 || y < 0 || x >= size || y >= size) return
-    const i = (y * size + x) * 4
-    px[i] = r
-    px[i + 1] = g
-    px[i + 2] = b
-    px[i + 3] = 255
-  }
-  const u = size / 100 // work in a 100-unit design space
+/** Render at hi-res in a 100-unit design space, then downsample. */
+function drawIcon(target) {
+  const SS = 4
+  const size = target * SS
+  const px = Buffer.alloc(size * size * 3)
+  const u = size / 100
 
-  // Field: deep green with rounded corners
-  const corner = 18 * u
+  // Hill crest: a gentle sine roll peaking left of center.
+  const hillY = (x) => 66 * u + 8 * u * Math.sin((x / size) * Math.PI * 1.4 + 2.2)
+
+  const inside = {
+    hill: (x, y) => y >= hillY(x),
+    ball: (() => {
+      const cx = 30 * u
+      const r = 7.5 * u
+      return (x, y) => {
+        const cy = hillY(cx) - r / 2
+        return (x - cx) ** 2 + (y - cy) ** 2 <= r * r
+      }
+    })(),
+    stick: (x, y) => {
+      const sx = 62 * u
+      const top = 18 * u
+      const bottom = hillY(sx) + 2 * u
+      return Math.abs(x - sx) <= 1.1 * u && y >= top && y <= bottom
+    },
+    flag: (x, y) => {
+      const sx = 63.1 * u
+      const top = 18 * u
+      const h = 14 * u
+      const len = 24 * u
+      if (x < sx || y < top || y > top + h) return false
+      const t = (y - top) / h
+      const extent = t <= 0.5 ? t * 2 : (1 - t) * 2
+      return x <= sx + len * (0.25 + 0.75 * extent)
+    }
+  }
+
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      const cx = Math.max(corner - x, x - (size - 1 - corner), 0)
-      const cy = Math.max(corner - y, y - (size - 1 - corner), 0)
-      if (cx * cx + cy * cy > corner * corner) continue
-      set(x, y, 23, 59, 36)
+      let c = INK
+      if (inside.hill(x, y)) c = HILL
+      if (inside.stick(x, y)) c = CREAM
+      if (inside.flag(x, y)) c = FLAG
+      if (inside.ball(x, y)) c = CREAM
+      const i = (y * size + x) * 3
+      px[i] = c[0]
+      px[i + 1] = c[1]
+      px[i + 2] = c[2]
     }
   }
-  // Ball: white circle lower-left
-  const bx = 32 * u
-  const by = 68 * u
-  const br = 13 * u
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const dx = x - bx
-      const dy = y - by
-      if (dx * dx + dy * dy <= br * br) set(x, y, 247, 244, 234)
+
+  // Box-downsample SS x SS blocks.
+  const out = Buffer.alloc(target * target * 3)
+  for (let y = 0; y < target; y++) {
+    for (let x = 0; x < target; x++) {
+      let r = 0
+      let g = 0
+      let b = 0
+      for (let dy = 0; dy < SS; dy++) {
+        for (let dx = 0; dx < SS; dx++) {
+          const i = ((y * SS + dy) * size + x * SS + dx) * 3
+          r += px[i]
+          g += px[i + 1]
+          b += px[i + 2]
+        }
+      }
+      const n = SS * SS
+      const o = (y * target + x) * 3
+      out[o] = Math.round(r / n)
+      out[o + 1] = Math.round(g / n)
+      out[o + 2] = Math.round(b / n)
     }
   }
-  // Flagstick
-  for (let y = Math.round(20 * u); y <= Math.round(78 * u); y++) {
-    for (let x = Math.round(62 * u); x <= Math.round(65 * u); x++) {
-      set(x, y, 247, 244, 234)
-    }
-  }
-  // Flag: orange triangle pointing right
-  const fy0 = 20 * u
-  const fy1 = 38 * u
-  const fx0 = 65 * u
-  const fx1 = 88 * u
-  for (let y = Math.round(fy0); y <= Math.round(fy1); y++) {
-    const t = (y - fy0) / (fy1 - fy0)
-    const extent = t <= 0.5 ? t * 2 : (1 - t) * 2
-    for (let x = Math.round(fx0); x <= Math.round(fx0 + (fx1 - fx0) * extent); x++) {
-      set(x, y, 200, 69, 31)
-    }
-  }
-  return encodePng(size, px)
+  return encodePng(target, out)
 }
 
 mkdirSync('public/icons', { recursive: true })

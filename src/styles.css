@@ -1268,3 +1268,126 @@ input[type='range'] {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
+
+/* ---------------------------------------------------------------
+   Design pass: nothing scrolls sideways, county silhouette brand.
+   These rules intentionally override earlier ones. */
+
+/* Gate: layered county silhouette, stronger identity */
+
+.gate {
+  position: relative;
+  overflow: hidden;
+}
+
+.gate-county {
+  position: absolute;
+  width: 150vw;
+  max-width: 44rem;
+  top: -12vh;
+  right: -42vw;
+  fill: #225132;
+  opacity: 0.85;
+  transform: rotate(6deg);
+  pointer-events: none;
+}
+
+.gate-card {
+  position: relative;
+  z-index: 1;
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.gate-title {
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin: 0.1rem 0 0;
+}
+
+.gate-subtitle {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+}
+
+/* Scorecard grid: always fits the viewport, no sideways scrolling */
+
+.scorecard-scroll {
+  overflow-x: visible;
+}
+
+.scorecard table {
+  min-width: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.scorecard th,
+.scorecard td {
+  padding: 8px 1px;
+  font-size: 0.8rem;
+}
+
+.scorecard thead th {
+  font-size: 0.72rem;
+}
+
+.scorecard .sticky-col {
+  position: static;
+  width: 4.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 8px;
+  font-size: 0.8rem;
+}
+
+.scorecard thead th:last-child,
+.scorecard .total-col {
+  width: 2.2rem;
+}
+
+/* Hole pills: nine always fit; more than twelve wraps instead of scrolls */
+
+.hole-strip {
+  overflow-x: visible;
+  flex-wrap: wrap;
+}
+
+.hole-strip .hole-pill {
+  flex: 1 1 0;
+  min-width: 34px;
+  height: 42px;
+  border-radius: 12px;
+}
+
+.edit-hole-strip {
+  overflow-x: visible;
+  flex-wrap: wrap;
+}
+
+/* Totals bar: all players share the width, names truncate */
+
+.totals-bar {
+  overflow-x: visible;
+}
+
+.totals-bar .total-cell {
+  min-width: 0;
+}
+
+.total-name {
+  font-size: 0.62rem;
+}
+
+/* Boards tables breathe less on small screens but never scroll */
+
+.board-table th,
+.board-table td {
+  padding: 9px 8px;
+  font-size: 0.9rem;
+}
