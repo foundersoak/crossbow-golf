@@ -84,3 +84,21 @@ describe('readMapConfig diagnostics', () => {
     }
   })
 })
+
+describe('readMapConfig with a JSON-typed binding', () => {
+  it('accepts PROPERTY_CONFIG delivered as an already-parsed object', () => {
+    const env = { PROPERTY_CONFIG: { ...BUNDLE } } as unknown as Env
+    const result = readMapConfig(env)
+    expect('missing' in result).toBe(false)
+  })
+
+  it('accepts numeric values inside an object binding', () => {
+    const numeric = Object.fromEntries(
+      Object.entries(BUNDLE).map(([k, v]) => [k, Number(v)])
+    )
+    const env = { PROPERTY_CONFIG: numeric } as unknown as Env
+    const result = readMapConfig(env)
+    expect('missing' in result).toBe(false)
+    if (!('missing' in result)) expect(result.defaultZoom).toBe(18)
+  })
+})

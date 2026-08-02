@@ -19,10 +19,15 @@ export function readMapConfig(env: Env): MapConfig | { missing: string[] } {
   // A single PROPERTY_CONFIG JSON secret may carry every value, so mobile
   // setup is one paste. Individually set vars win over the JSON.
   let bundle: Record<string, unknown> = {}
-  if (env.PROPERTY_CONFIG) {
+  const rawConfig: unknown = env.PROPERTY_CONFIG
+  if (rawConfig && typeof rawConfig === 'object') {
+    // A variable saved with type "JSON" in the dashboard arrives as an
+    // already-parsed object. Use it directly.
+    bundle = rawConfig as Record<string, unknown>
+  } else if (typeof rawConfig === 'string' && rawConfig.trim() !== '') {
     // Phone keyboards love to smarten quotes and sneak in invisible
     // characters; normalize before parsing so a mobile paste just works.
-    const cleaned = env.PROPERTY_CONFIG
+    const cleaned = rawConfig
       .replace(/[\u201C\u201D\u201E\u2033]/g, '"') // curly double quotes
       .replace(/[\u2018\u2019\u2032]/g, "'") // curly single quotes
       .replace(/[\u200B-\u200D\uFEFF]/g, '') // zero-width chars and BOM
