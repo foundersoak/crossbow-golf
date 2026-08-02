@@ -32,9 +32,13 @@ const TXGIO_NAIP: BaseLayerDef = {
   attribution: 'USDA NAIP via TxGIO, public domain',
   make: async () => {
     const esri = await import('esri-leaflet')
+    // useCors: false makes esri-leaflet fall back to JSONP + plain image
+    // requests, which renders on ArcGIS servers that do not send CORS
+    // headers for image exports.
     return esri.imageMapLayer({
       url: 'https://imagery.geographic.texas.gov/server/rest/services/NAIP/NAIP22_NCCIR_60cm/ImageServer',
-      maxZoom: 19
+      maxZoom: 19,
+      useCors: false
     }) as unknown as L.Layer
   },
   probe: async () => {

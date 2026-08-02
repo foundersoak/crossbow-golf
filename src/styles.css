@@ -1391,3 +1391,100 @@ input[type='range'] {
   padding: 9px 8px;
   font-size: 0.9rem;
 }
+
+/* ---------------------------------------------------------------
+   Purgatory pass: engraved cream medallion gate */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.gate {
+  background: var(--paper);
+  overflow-y: auto;
+}
+
+.gate-stack {
+  width: min(24rem, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.gate-county {
+  display: none;
+}
+
+.medallion {
+  width: min(72vw, 310px);
+  height: auto;
+  margin-bottom: 1.1rem;
+}
+
+.medallion-small {
+  width: min(46vw, 190px);
+  margin-bottom: 0.75rem;
+}
+
+.medal-ring {
+  fill: none;
+  stroke: var(--green-deep);
+}
+
+.medal-fill {
+  fill: var(--green-deep);
+}
+
+.medal-ticks line {
+  stroke: var(--green-deep);
+  stroke-width: 1;
+}
+
+.medal-hatch line {
+  stroke: var(--green-deep);
+  stroke-width: 0.8;
+  opacity: 0.07;
+}
+
+.medal-text {
+  font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  font-size: 17.5px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  fill: var(--green-deep);
+}
+
+.gate-card {
+  width: 100%;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 rgba(23, 59, 36, 0.18);
+  padding: 1.1rem 1.25rem 1.35rem;
+}
+
+.gate-loading {
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.medal-orn text {
+  font-size: 15px;
+  fill: var(--green-deep);
+}
+
+.medal-sub {
+  margin: 0 0 1rem;
+  font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+}

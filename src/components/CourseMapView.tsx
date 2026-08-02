@@ -128,6 +128,21 @@ export default function CourseMapView({
       activeBaseRef.current = layer
       mapRef.current.attributionControl.setPrefix(false)
       mapRef.current.attributionControl.addAttribution(def.attribution)
+
+      // If a non-default source fails to actually draw imagery, drop it
+      // from the picker and fall back rather than showing a blank map.
+      const evented = layer as unknown as L.Evented & { on?: L.Evented['on'] }
+      if (def.key !== BASE_LAYERS[0].key && typeof evented.on === 'function') {
+        let failures = 0
+        evented.on('requesterror error', () => {
+          failures++
+          if (failures >= 2) {
+            setAvailableLayers((prev) => prev.filter((l) => l.key !== def.key))
+            setLayerKey(BASE_LAYERS[0].key)
+            setPreferredLayerKey(BASE_LAYERS[0].key)
+          }
+        })
+      }
     })
     return () => {
       cancelled = true

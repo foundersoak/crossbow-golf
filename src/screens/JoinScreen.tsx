@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { apiGet, apiSend } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import type { RoundDetail } from '../../shared/protocol'
-import CountyShape from '../components/CountyShape'
+import CountyMedallion from '../components/CountyMedallion'
 
 interface JoinInfo {
   round: RoundDetail
@@ -73,7 +73,8 @@ export default function JoinScreen() {
 
   return (
     <div className="screen-center gate">
-      <CountyShape className="gate-county" />
+      <div className="gate-stack">
+      <CountyMedallion className="medallion medallion-small" />
       <div className="gate-card">
         <p className="gate-kicker">Round on {info.round.playedOn}</p>
         <h1>Who are you?</h1>
@@ -131,6 +132,7 @@ export default function JoinScreen() {
             {busy ? 'Joining…' : 'Join the round'}
           </button>
         </form>
+      </div>
       </div>
     </div>
   )
