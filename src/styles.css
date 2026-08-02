@@ -1066,8 +1066,7 @@ button {
 /* Score cells need room for the notation marks so rings never touch
    cell borders or each other. */
 .scorecard tbody td {
-  padding: 7px 5px;
-  min-width: 40px;
+  padding: 7px 2px;
   height: 44px;
 }
 
@@ -1547,7 +1546,7 @@ input[type='range'] {
 
 .scorecard .sticky-col {
   position: static;
-  width: 4.6rem;
+  width: 4.2rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1557,7 +1556,45 @@ input[type='range'] {
 
 .scorecard thead th:last-child,
 .scorecard .total-col {
-  width: 2.2rem;
+  width: 2rem;
+}
+
+/* The fixed-layout columns run ~30px on phones, so the notation marks
+   shrink to keep clear air between neighboring rings. */
+.scorecard .score-mark {
+  width: 22px;
+  height: 22px;
+  border-width: 1.25px;
+}
+
+.scorecard .cell-eagle .score-mark {
+  box-shadow: inset 0 0 0 1.75px #fff, inset 0 0 0 3px var(--accent);
+}
+
+.scorecard .cell-dblover .score-mark {
+  box-shadow: inset 0 0 0 1.75px #fff, inset 0 0 0 3px var(--ink);
+}
+
+/* Narrowest phones: columns drop under 28px, so the marks step down
+   once more and the name column gives back a few pixels. */
+@media (max-width: 389px) {
+  .scorecard .sticky-col {
+    width: 3.8rem;
+  }
+
+  .scorecard .score-mark {
+    width: 19px;
+    height: 19px;
+    font-size: 0.72rem;
+  }
+
+  .scorecard .cell-eagle .score-mark {
+    box-shadow: inset 0 0 0 1.5px #fff, inset 0 0 0 2.5px var(--accent);
+  }
+
+  .scorecard .cell-dblover .score-mark {
+    box-shadow: inset 0 0 0 1.5px #fff, inset 0 0 0 2.5px var(--ink);
+  }
 }
 
 /* Hole pills: nine always fit; more than twelve wraps instead of scrolls */
