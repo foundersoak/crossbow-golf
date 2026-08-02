@@ -66,7 +66,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
+  padding: calc(1.25rem + env(safe-area-inset-top, 0px)) 1.25rem
+    calc(1.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 .muted {
@@ -78,7 +79,10 @@ img {
 }
 
 .page {
-  padding: 1rem 1rem calc(2rem + env(safe-area-inset-bottom, 0px));
+  /* Standalone PWA draws under the iOS status bar (black-translucent +
+     viewport-fit=cover), so every screen pads the top safe area. */
+  padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem
+    calc(2rem + env(safe-area-inset-bottom, 0px));
   max-width: 40rem;
   margin: 0 auto;
   display: flex;
@@ -546,6 +550,7 @@ button {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .edit-map {
@@ -820,7 +825,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.6rem 1rem 0.4rem;
+  padding: calc(0.6rem + env(safe-area-inset-top, 0px)) 1rem 0.4rem;
   flex-wrap: wrap;
 }
 
