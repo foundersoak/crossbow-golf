@@ -48,6 +48,12 @@ export async function pendingCount(roundId: string): Promise<number> {
   return (await db()).countFromIndex('outbox', 'byRound', roundId)
 }
 
+/** Cell keys (playerId:hole) still waiting on a server ack, for pending dots. */
+export async function pendingCellKeys(roundId: string): Promise<Set<string>> {
+  const rows = await pendingForRound(roundId)
+  return new Set(rows.map((r) => `${r.playerId}:${r.holeNumber}`))
+}
+
 const inFlight = new Set<string>()
 
 export interface FlushResult {

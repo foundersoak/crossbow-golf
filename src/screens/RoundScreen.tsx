@@ -172,6 +172,7 @@ export default function RoundScreen() {
             canEdit={canEdit}
             getCell={getCell}
             setScore={setScore}
+            pendingCells={state.pendingCells}
           />
 
           <div className="hole-nav-row">
@@ -230,7 +231,8 @@ function HoleEntry({
   viewerId,
   canEdit,
   getCell,
-  setScore
+  setScore,
+  pendingCells
 }: {
   hole: HoleData
   round: RoundDetail
@@ -238,6 +240,7 @@ function HoleEntry({
   canEdit: boolean
   getCell: (playerId: string, hole: number) => { strokes: number | null; authorPlayerId: string } | undefined
   setScore: (playerId: string, hole: number, strokes: number | null) => Promise<void>
+  pendingCells: Set<string>
 }) {
   const nameOf = (id: string) => round.players.find((p) => p.id === id)?.name ?? 'Someone'
   const ordered = [...round.players].sort((a, b) =>
@@ -290,6 +293,9 @@ function HoleEntry({
                 }
               >
                 {strokes ?? 'Par?'}
+                {pendingCells.has(`${p.id}:${hole.holeNumber}`) && (
+                  <span className="pending-dot" title="Waiting to sync" />
+                )}
               </button>
               <button
                 className="btn score-btn"

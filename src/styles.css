@@ -1070,3 +1070,13 @@ button {
   color: var(--accent);
   font-weight: 800;
 }
+
+.pending-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d8a200;
+  margin-left: 4px;
+  vertical-align: super;
+}

@@ -12,7 +12,7 @@ import {
 } from '../../shared/protocol'
 import { apiGet } from './api'
 import { correctedNow, observeServerTime } from './timeSync'
-import { cellKey, enqueue, flushRound, pendingCount } from './outbox'
+import { cellKey, enqueue, flushRound, pendingCellKeys, pendingCount } from './outbox'
 import type { LayoutData } from '../../shared/types'
 
 export type Connection = 'connecting' | 'live' | 'offline'
@@ -23,6 +23,7 @@ export interface RoundState {
   cells: Map<string, CellState> // key playerId:hole
   connection: Connection
   queued: number
+  pendingCells: Set<string> // playerId:hole keys not yet acked
   error: string | null
 }
 
@@ -37,6 +38,7 @@ export function useRound(roundId: string | undefined, authorPlayerId: string | u
     cells: new Map(),
     connection: 'connecting',
     queued: 0,
+    pendingCells: new Set(),
     error: null
   })
   const socketRef = useRef<ReconnectingWebSocket | null>(null)
@@ -57,7 +59,8 @@ export function useRound(roundId: string | undefined, authorPlayerId: string | u
   const refreshQueued = useCallback(async () => {
     if (!roundId) return
     const queued = await pendingCount(roundId).catch(() => 0)
-    setState((prev) => (prev.queued === queued ? prev : { ...prev, queued }))
+    const pendingCells = await pendingCellKeys(roundId).catch(() => new Set<string>())
+    setState((prev) => ({ ...prev, queued, pendingCells }))
   }, [roundId])
 
   const flush = useCallback(async () => {
@@ -153,8 +156,39 @@ export function useRound(roundId: string | undefined, authorPlayerId: string | u
       }
     }, 30_000)
 
+    // Resync triggers. iOS suspends the page on screen lock and kills the
+    // socket without firing close, so on every resume we assume the socket
+    // is dead: force a reconnect (which replays the snapshot) and flush the
+    // outbox. Background Sync is not used; it has no Safari support.
+    const resync = () => {
+      if (document.visibilityState !== 'visible') return
+      ws.reconnect()
+      void flush()
+    }
+    const onVisibility = () => resync()
+    const onOnline = () => resync()
+    const onPageShow = () => resync()
+    document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('online', onOnline)
+    window.addEventListener('pageshow', onPageShow)
+    window.addEventListener('focus', onVisibility)
+
+    // Backoff-ish retry: while anything is queued, try a flush every 10s.
+    const retryTimer = setInterval(() => {
+      void (async () => {
+        if (!roundId) return
+        const queued = await pendingCount(roundId).catch(() => 0)
+        if (queued > 0) void flush()
+      })()
+    }, 10_000)
+
     return () => {
       clearInterval(pingTimer)
+      clearInterval(retryTimer)
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('online', onOnline)
+      window.removeEventListener('pageshow', onPageShow)
+      window.removeEventListener('focus', onVisibility)
       ws.close()
       socketRef.current = null
     }
