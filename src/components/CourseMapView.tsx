@@ -7,7 +7,8 @@ import {
   type BaseLayerDef
 } from '../lib/mapLayers'
 import { holeYards } from '../../shared/geo'
-import type { HoleData } from '../../shared/types'
+import type { HoleData, OverlayCorners, OverlayData } from '../../shared/types'
+import { DistortedImageOverlay } from '../lib/distortedOverlay'
 
 export interface MapConfig {
   center: { lat: number; lng: number }
@@ -24,6 +25,12 @@ interface Props {
   onMoveMarker?: (holeId: string, which: 'tee' | 'pin', pos: { lat: number; lng: number }) => void
   /** Exposes the map so parents can read the center (crosshair placement). */
   onMapReady?: (map: L.Map) => void
+  /** Drone photo overlay, warped to its stored corner coordinates. */
+  overlay?: OverlayData | null
+  overlayVisible?: boolean
+  /** Admin alignment mode: draggable corner handles. */
+  cornerEditable?: boolean
+  onCornersChange?: (corners: OverlayCorners) => void
 }
 
 function teeIcon(holeNumber: number, selected: boolean): L.DivIcon {
@@ -53,7 +60,11 @@ export default function CourseMapView({
   selectedHoleId = null,
   onSelectHole,
   onMoveMarker,
-  onMapReady
+  onMapReady,
+  overlay = null,
+  overlayVisible = true,
+  cornerEditable = false,
+  onCornersChange
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
@@ -122,6 +133,77 @@ export default function CourseMapView({
       cancelled = true
     }
   }, [layerKey, availableLayers])
+
+  // Drone overlay layer lifecycle.
+  const overlayLayerRef = useRef<DistortedImageOverlay | null>(null)
+  const cornerMarkersRef = useRef<L.Marker[]>([])
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    if (!overlay || !overlayVisible) {
+      overlayLayerRef.current?.remove()
+      overlayLayerRef.current = null
+      return
+    }
+    const layer = new DistortedImageOverlay(
+      `/api/media/${overlay.imageKey}`,
+      overlay.corners,
+      overlay.opacity
+    )
+    layer.addTo(map)
+    overlayLayerRef.current = layer
+    return () => {
+      layer.remove()
+      overlayLayerRef.current = null
+    }
+    // Recreate only when the image identity or visibility changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overlay?.id, overlay?.imageKey, overlayVisible])
+
+  // Live corner/opacity updates without recreating the layer.
+  useEffect(() => {
+    if (overlay && overlayLayerRef.current) {
+      overlayLayerRef.current.setCorners(overlay.corners)
+      overlayLayerRef.current.setOpacity(overlay.opacity)
+    }
+  }, [overlay])
+
+  // Corner handles for the admin alignment screen.
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !cornerEditable || !overlay) return
+    const keys: (keyof OverlayCorners)[] = ['nw', 'ne', 'se', 'sw']
+    const markers = keys.map((key) => {
+      const pos = overlay.corners[key]
+      const marker = L.marker([pos.lat, pos.lng], {
+        draggable: true,
+        keyboard: false,
+        icon: L.divIcon({
+          className: '',
+          html: `<div class="corner-handle">${key.toUpperCase()}</div>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        })
+      })
+      marker.on('drag dragend', () => {
+        const current: OverlayCorners = { ...overlay.corners }
+        markers.forEach((m, i) => {
+          const ll = m.getLatLng()
+          current[keys[i]] = { lat: ll.lat, lng: ll.lng }
+        })
+        onCornersChange?.(current)
+      })
+      marker.addTo(map)
+      return marker
+    })
+    cornerMarkersRef.current = markers
+    return () => {
+      markers.forEach((m) => m.remove())
+      cornerMarkersRef.current = []
+    }
+    // Recreate handles only when switching overlays or toggling edit mode.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cornerEditable, overlay?.id])
 
   // Render holes. Skipped while a marker drag is in flight so the drag
   // survives parent re-renders; positions are updated imperatively instead.

@@ -25,6 +25,16 @@ export default function MoreScreen() {
             <Link to="/edit">Course editor</Link>
           </li>
         )}
+        {player?.isAdmin && (
+          <li>
+            <Link to="/overlay">Drone photo overlay</Link>
+          </li>
+        )}
+        {player && (
+          <li>
+            <Link to={`/players/${player.id}`}>My profile</Link>
+          </li>
+        )}
       </ul>
       {player?.isAdmin && <AdminPanel selfId={player.id} />}
       <button className="btn btn-block" onClick={() => void logout()}>

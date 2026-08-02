@@ -1200,3 +1200,33 @@ button {
   stroke-width: 1.5;
   stroke-dasharray: 4 4;
 }
+
+/* Drone overlay */
+
+.corner-handle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 850;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  cursor: grab;
+}
+
+.overlay-toggle {
+  position: absolute;
+  bottom: 24px;
+  left: 10px;
+  z-index: 800;
+}
+
+input[type='range'] {
+  flex: 1;
+  accent-color: var(--green-deep);
+  min-height: var(--tap);
+}

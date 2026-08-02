@@ -52,6 +52,22 @@ export interface RosterEntry {
   isAdmin: boolean
 }
 
+export interface OverlayCorners {
+  nw: { lat: number; lng: number }
+  ne: { lat: number; lng: number }
+  se: { lat: number; lng: number }
+  sw: { lat: number; lng: number }
+}
+
+export interface OverlayData {
+  id: string
+  name: string | null
+  imageKey: string
+  corners: OverlayCorners
+  opacity: number
+  isActive: boolean
+}
+
 // Draft hole as sent by the editor. Distances are recomputed server-side.
 export interface DraftHoleInput {
   id?: string

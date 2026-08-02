@@ -42,6 +42,13 @@ import {
   handlePlayerProfile,
   handleRecords
 } from './api/stats'
+import {
+  handleActiveOverlay,
+  handleOverlayDelete,
+  handleOverlayList,
+  handleOverlayUpdate,
+  handleOverlayUpload
+} from './api/overlays'
 
 export { RoundRoom } from './do/RoundRoom'
 
@@ -140,6 +147,18 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   {
     const m = pathname.match(/^\/api\/stats\/player\/([A-Za-z0-9]+)$/)
     if (m && method === 'GET') return handlePlayerProfile(env, session, m[1])
+  }
+
+  // Drone overlays
+  if (pathname === '/api/overlays' && method === 'POST')
+    return handleOverlayUpload(request, env, session)
+  if (pathname === '/api/overlays' && method === 'GET') return handleOverlayList(env, session)
+  if (pathname === '/api/overlays/active' && method === 'GET')
+    return handleActiveOverlay(env, session)
+  {
+    const m = pathname.match(/^\/api\/overlays\/([A-Za-z0-9]+)$/)
+    if (m && method === 'PUT') return handleOverlayUpdate(request, env, session, m[1])
+    if (m && method === 'DELETE') return handleOverlayDelete(env, session, m[1])
   }
 
   // Media

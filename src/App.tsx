@@ -12,6 +12,7 @@ import RoundScreen from './screens/RoundScreen'
 import JoinScreen from './screens/JoinScreen'
 import BoardsScreen from './screens/BoardsScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import OverlayScreen from './screens/OverlayScreen'
 
 export default function App() {
   return (
@@ -56,6 +57,7 @@ function Gated() {
         <Route path="/rounds/:id" element={<RoundScreen />} />
         <Route path="/boards" element={<BoardsScreen />} />
         <Route path="/players/:id" element={<ProfileScreen />} />
+        <Route path="/overlay" element={<OverlayScreen />} />
         <Route path="/more" element={<MoreScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

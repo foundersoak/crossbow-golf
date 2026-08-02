@@ -4,18 +4,27 @@ import CourseMapView from '../components/CourseMapView'
 import { useMapConfig } from '../lib/useMapConfig'
 import { useAuth } from '../lib/auth'
 import { apiGet } from '../lib/api'
-import type { HoleData, LayoutData } from '../../shared/types'
+import type { HoleData, LayoutData, OverlayData } from '../../shared/types'
+
+const OVERLAY_PREF = 'crossbow.overlayVisible'
 
 export default function MapScreen() {
   const configState = useMapConfig()
   const { player } = useAuth()
   const [layout, setLayout] = useState<LayoutData | null | undefined>(undefined)
   const [selectedHoleId, setSelectedHoleId] = useState<string | null>(null)
+  const [overlay, setOverlay] = useState<OverlayData | null>(null)
+  const [overlayVisible, setOverlayVisible] = useState(
+    () => localStorage.getItem(OVERLAY_PREF) !== 'off'
+  )
 
   useEffect(() => {
     apiGet<LayoutData | null>('/api/layouts/current')
       .then(setLayout)
       .catch(() => setLayout(null))
+    apiGet<OverlayData | null>('/api/overlays/active')
+      .then(setOverlay)
+      .catch(() => setOverlay(null))
   }, [])
 
   if (configState.kind === 'loading') {
@@ -56,7 +65,21 @@ export default function MapScreen() {
         holes={holes}
         selectedHoleId={selectedHoleId}
         onSelectHole={setSelectedHoleId}
+        overlay={overlay}
+        overlayVisible={overlayVisible}
       />
+      {overlay && (
+        <button
+          className={overlayVisible ? 'chip chip-active overlay-toggle' : 'chip overlay-toggle'}
+          onClick={() => {
+            const next = !overlayVisible
+            setOverlayVisible(next)
+            localStorage.setItem(OVERLAY_PREF, next ? 'on' : 'off')
+          }}
+        >
+          Drone photo
+        </button>
+      )}
       {layout === null && (
         <div className="map-empty-banner">
           <p>No course published yet.</p>
