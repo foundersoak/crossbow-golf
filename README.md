@@ -1,4 +1,4 @@
-# Crossbow Ranch Pitch 'n Putt
+# The Links at Crossbow Ranch
 
 A private web app for a family nine-hole pitch-and-putt course.
 

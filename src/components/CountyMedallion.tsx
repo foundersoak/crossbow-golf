@@ -15,7 +15,7 @@ export default function CountyMedallion({ className }: { className?: string }) {
       className={className}
       viewBox="0 0 360 360"
       role="img"
-      aria-label="Crossbow Ranch Pitch 'n Putt, Bosque County, Texas"
+      aria-label="The Links at Crossbow Ranch, Bosque County, Texas"
     >
       <defs>
         {/* Top semicircle, drawn clockwise so text reads upright. */}
@@ -69,7 +69,7 @@ export default function CountyMedallion({ className }: { className?: string }) {
 
       <text className="medal-text">
         <textPath href="#medal-arc-top" startOffset="50%" textAnchor="middle">
-          CROSSBOW RANCH ✦ PITCH N PUTT
+          THE LINKS AT CROSSBOW RANCH
         </textPath>
       </text>
 

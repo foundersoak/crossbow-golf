@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon-192.png', 'icons/icon-512.png'],
       manifest: {
-        name: "Crossbow Ranch Pitch 'n Putt",
-        short_name: 'Crossbow Golf',
+        name: 'The Links at Crossbow Ranch',
+        short_name: 'The Links',
         description: 'Course map, live scorecards, and records for the ranch course.',
         theme_color: '#173b24',
         background_color: '#f4f1e8',

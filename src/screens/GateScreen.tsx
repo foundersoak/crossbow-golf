@@ -9,7 +9,7 @@ export default function GateScreen() {
   return (
     <div className="screen-center gate">
       <div className="gate-stack">
-        <h1 className="visually-hidden">Crossbow Ranch Pitch 'n Putt</h1>
+        <h1 className="visually-hidden">The Links at Crossbow Ranch</h1>
         <CountyMedallion className="medallion" />
         <p className="medal-sub">Bosque County, Texas</p>
         <div className="gate-card">{hasSession ? <ClaimStep /> : <CodeStep />}</div>
