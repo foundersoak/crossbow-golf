@@ -21,6 +21,19 @@ function fmtVsPar(v: number): string {
   return v > 0 ? `+${v}` : String(v)
 }
 
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join('')
+}
+
+function vsParClass(v: number): string {
+  return v < 0 ? 'score-under' : v === 0 ? 'score-even' : 'score-over'
+}
+
 export default function BoardsScreen() {
   const [tab, setTab] = useState<Tab>('leaderboard')
   const [layouts, setLayouts] = useState<LayoutSummary[]>([])
@@ -133,36 +146,41 @@ function Leaderboard({
       {board === null && <p className="muted">Loading…</p>}
       {board?.length === 0 && <p className="muted">No completed full rounds yet.</p>}
       {board && board.length > 0 && (
-        <div className="board-table-wrap">
-          <table className="board-table">
-            <thead>
-              <tr>
-                <th>Player</th>
-                <th>Best</th>
-                <th>Average</th>
-                <th>Rounds</th>
-              </tr>
-            </thead>
-            <tbody>
-              {board.map((row) => (
-                <tr key={row.playerId}>
-                  <td>
-                    <Link to={`/players/${row.playerId}`}>{row.name}</Link>
-                  </td>
-                  <td>
-                    <strong>{fmtVsPar(row.bestVsPar)}</strong>
-                    {!cross && <span className="muted small"> ({row.bestTotal})</span>}
-                  </td>
-                  <td>
+        <ol className="lb-list">
+          {board.map((row, i) => {
+            // Tied ranks read as T2, T2, 4 — the way tour boards do it.
+            const firstAt = board.findIndex((r) => r.bestVsPar === row.bestVsPar)
+            const tied = board.filter((r) => r.bestVsPar === row.bestVsPar).length > 1
+            const rank = `${tied ? 'T' : ''}${firstAt + 1}`
+            return (
+              <li key={row.playerId} className={i === 0 ? 'lb-row lb-leader' : 'lb-row'}>
+                <span className="lb-rank">{rank}</span>
+                <span className="avatar-initials" aria-hidden>
+                  {initials(row.name)}
+                </span>
+                <div className="lb-main">
+                  {i === 0 && <span className="lb-kicker">Leader</span>}
+                  <Link className="lb-name" to={`/players/${row.playerId}`}>
+                    {row.name}
+                  </Link>
+                  <span className="lb-sub">
+                    {row.rounds} round{row.rounds === 1 ? '' : 's'} · avg{' '}
                     {fmtVsPar(row.avgVsPar)}
-                    {!cross && <span className="muted small"> ({row.avgTotal})</span>}
-                  </td>
-                  <td>{row.rounds}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    {!cross && ` (${row.avgTotal})`}
+                  </span>
+                </div>
+                <div className="lb-score">
+                  <span className={`lb-best ${vsParClass(row.bestVsPar)}`}>
+                    {fmtVsPar(row.bestVsPar)}
+                  </span>
+                  <span className="lb-score-label">
+                    {cross ? 'best' : `best · ${row.bestTotal}`}
+                  </span>
+                </div>
+              </li>
+            )
+          })}
+        </ol>
       )}
     </section>
   )
@@ -240,7 +258,13 @@ function HoleStats({ layoutId }: { layoutId: string }) {
                   {h.name ? ` · ${h.name}` : ''}
                 </td>
                 <td>{h.par}</td>
-                <td>{h.avg === null ? '·' : h.avg.toFixed(2)}</td>
+                <td>
+                  {h.avg === null ? (
+                    '·'
+                  ) : (
+                    <span className={vsParClass(h.overPar!)}>{h.avg.toFixed(2)}</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -285,34 +309,52 @@ function Records() {
 
       <h2>Low rounds</h2>
       {data.lowRounds.length === 0 && <p className="muted">None yet.</p>}
-      <ul className="card-list">
+      <ol className="lb-list">
         {data.lowRounds.map((r, i) => (
-          <li key={i} className="card card-row">
-            <div className="card-main">
-              <span className="card-title">
-                {r.player} · {fmtVsPar(r.vsPar)} ({r.total})
-              </span>
-              <span className="card-sub">
+          <li key={i} className={i === 0 ? 'lb-row lb-leader' : 'lb-row'}>
+            <span className="lb-rank">{i + 1}</span>
+            <span className="avatar-initials" aria-hidden>
+              {initials(r.player)}
+            </span>
+            <div className="lb-main">
+              {i === 0 && <span className="lb-kicker">Course record</span>}
+              <Link className="lb-name" to={`/players/${r.playerId}`}>
+                {r.player}
+              </Link>
+              <span className="lb-sub">
                 {r.playedOn} · layout v{r.layoutVersion}
                 {r.layoutName ? ` (${r.layoutName})` : ''}
               </span>
             </div>
+            <div className="lb-score">
+              <span className={`lb-best ${vsParClass(r.vsPar)}`}>{fmtVsPar(r.vsPar)}</span>
+              <span className="lb-score-label">{r.total} strokes</span>
+            </div>
           </li>
         ))}
-      </ul>
+      </ol>
 
       <h2>Most birdies</h2>
       {data.birdies.length === 0 && <p className="muted">None yet. Aim smaller.</p>}
-      <ul className="card-list">
-        {data.birdies.map((b) => (
-          <li key={b.playerId} className="card card-row">
-            <span className="card-title">
-              <Link to={`/players/${b.playerId}`}>{b.name}</Link>
+      <ol className="lb-list">
+        {data.birdies.map((b, i) => (
+          <li key={b.playerId} className="lb-row">
+            <span className="lb-rank">{i + 1}</span>
+            <span className="avatar-initials" aria-hidden>
+              {initials(b.name)}
             </span>
-            <span className="card-title">{b.birdies}</span>
+            <div className="lb-main">
+              <Link className="lb-name" to={`/players/${b.playerId}`}>
+                {b.name}
+              </Link>
+            </div>
+            <div className="lb-score">
+              <span className="lb-best score-under">{b.birdies}</span>
+              <span className="lb-score-label">birdie{b.birdies === 1 ? '' : 's'}</span>
+            </div>
           </li>
         ))}
-      </ul>
+      </ol>
 
       <h2>Ace log</h2>
       {data.aces.length === 0 && <p className="muted">The board is waiting for its first hole-in-one.</p>}

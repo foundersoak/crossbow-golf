@@ -982,6 +982,10 @@ button {
   line-height: 1.1;
 }
 
+.total-vspar.vspar-under {
+  color: var(--gold);
+}
+
 .total-strokes {
   font-size: 0.7rem;
   opacity: 0.8;
@@ -1052,17 +1056,44 @@ button {
   font-weight: 850;
 }
 
-.cell-under {
-  background: #e2f2e5;
+/* Classic golf notation: circled scores under par, squared over par,
+   doubled marks for eagle / double bogey and worse, gold fill for an ace. */
+.score-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin: -3px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-under .score-mark,
+.cell-eagle .score-mark {
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
   font-weight: 800;
 }
 
-.cell-over {
-  background: #f7e8e4;
+.cell-eagle .score-mark {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--accent);
 }
 
-.cell-ace {
+.cell-over .score-mark,
+.cell-dblover .score-mark {
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+}
+
+.cell-dblover .score-mark {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--ink);
+}
+
+.cell-ace .score-mark {
   background: var(--gold);
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
   font-weight: 850;
 }
 
@@ -1132,6 +1163,132 @@ button {
 .board-table a {
   color: var(--ink);
   font-weight: 700;
+}
+
+/* Leaderboard rows: rank, initials avatar, name, bold vs-par at the right.
+   The top row is the spotlight — bigger avatar, kicker label, drop shadow. */
+.lb-list {
+  list-style: none;
+  margin: 0.5rem 0 1.25rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.85rem;
+}
+
+.lb-leader {
+  padding: 0.85rem;
+  box-shadow: 4px 4px 0 rgba(23, 59, 36, 0.18);
+}
+
+.lb-rank {
+  min-width: 1.7em;
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.lb-leader .lb-rank {
+  color: var(--ink);
+}
+
+.avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--green-deep);
+  color: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.lb-leader .avatar-initials {
+  width: 46px;
+  height: 46px;
+  font-size: 1rem;
+}
+
+.lb-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.lb-kicker {
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--accent);
+}
+
+.lb-name {
+  font-weight: 750;
+  color: var(--ink);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-sub {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.lb-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.lb-best {
+  font-size: 1.35rem;
+  font-weight: 850;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-leader .lb-best {
+  font-size: 1.7rem;
+}
+
+.lb-score-label {
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+/* Under par shows warm like a tour board; over par stays ink. */
+.score-under {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.score-even {
+  color: var(--muted);
+}
+
+.score-over {
+  color: var(--ink);
 }
 
 .stat-callouts {

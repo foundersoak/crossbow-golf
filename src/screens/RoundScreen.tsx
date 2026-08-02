@@ -223,7 +223,11 @@ export default function RoundScreen() {
             className={t.player.id === player?.id ? 'total-cell total-self' : 'total-cell'}
           >
             <span className="total-name">{t.player.name}</span>
-            <span className="total-vspar">
+            <span
+              className={
+                t.holesIn > 0 && t.vsPar < 0 ? 'total-vspar vspar-under' : 'total-vspar'
+              }
+            >
               {t.holesIn === 0 ? '·' : t.vsPar === 0 ? 'E' : t.vsPar > 0 ? `+${t.vsPar}` : t.vsPar}
             </span>
             <span className="total-strokes">{t.holesIn === 0 ? '' : t.strokes}</span>
@@ -382,19 +386,25 @@ function ScoreCard({
                     const s = cell?.strokes ?? null
                     const byOther = cell && s != null && cell.authorPlayerId !== p.id
                     const par = h.par
+                    // Classic golf notation: circles under par, squares over,
+                    // doubled for eagle / double bogey and worse.
                     const cls =
                       s == null
                         ? ''
                         : s === 1
                           ? 'cell-ace'
-                          : s < par
-                            ? 'cell-under'
-                            : s === par
-                              ? ''
-                              : 'cell-over'
+                          : s <= par - 2
+                            ? 'cell-eagle'
+                            : s < par
+                              ? 'cell-under'
+                              : s === par
+                                ? ''
+                                : s >= par + 2
+                                  ? 'cell-dblover'
+                                  : 'cell-over'
                     return (
                       <td key={h.id} className={cls} onClick={() => onPickCell(h.holeNumber)}>
-                        {s ?? ''}
+                        {s != null ? <span className="score-mark">{s}</span> : ''}
                         {byOther && <sup className="attribution-mark">*</sup>}
                       </td>
                     )
