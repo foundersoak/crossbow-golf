@@ -16,8 +16,7 @@
     {
       "binding": "DB",
       "database_name": "crossbow-golf",
-      // Replace with the id printed by: wrangler d1 create crossbow-golf
-      "database_id": "00000000-0000-0000-0000-000000000000"
+      "database_id": "0612e285-ab1f-4dca-b4a2-2078706944bd"
     }
   ],
   "r2_buckets": [
