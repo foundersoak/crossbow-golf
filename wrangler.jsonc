@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "crossbow-golf",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "crossbow-golf",
+      // Replace with the id printed by: wrangler d1 create crossbow-golf
+      "database_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "crossbow-golf-media"
+    }
+  ]
+  // Property coordinates are NEVER put in "vars" here (this file is committed).
+  // Locally they go in .dev.vars (gitignored). In production:
+  //   wrangler secret put PROPERTY_CENTER_LAT   (and the rest, see README)
+}

@@ -1,0 +1,117 @@
+/* Crossbow Ranch Pitch 'n Putt
+   Design rules: phone-first, readable in direct sunlight.
+   High contrast, large type, minimal chrome. No user-facing em dashes. */
+
+:root {
+  --ink: #14120d;
+  --paper: #f7f4ea;
+  --green-deep: #173b24;
+  --green-live: #1f6b3a;
+  --accent: #c8451f;
+  --line: #c9c2ae;
+  --muted: #5c5749;
+  --radius: 10px;
+  --tap-target: 64px;
+  font-size: 17px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem;
+}
+
+code {
+  background: #eae5d6;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+button {
+  font: inherit;
+}
+
+.screen-center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.notice-card {
+  max-width: 26rem;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 4px 4px 0 rgba(20, 18, 13, 0.15);
+}
+
+.notice-card ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
+/* Map */
+
+.map-screen {
+  position: relative;
+  height: 100%;
+}
+
+.map-container {
+  position: absolute;
+  inset: 0;
+  background: #22301f;
+}
+
+.layer-switcher {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 10px;
+  z-index: 800;
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.chip-active {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: #fff;
+}

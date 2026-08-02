@@ -1,0 +1,12 @@
+# Copy to .dev.vars (gitignored) and replace with the real property values.
+# These placeholders are deliberately fake: a spot in the South Atlantic Ocean.
+PROPERTY_CENTER_LAT=-41.123456
+PROPERTY_CENTER_LNG=-14.654321
+PROPERTY_BOUNDS_NE_LAT=-41.122556
+PROPERTY_BOUNDS_NE_LNG=-14.653221
+PROPERTY_BOUNDS_SW_LAT=-41.124356
+PROPERTY_BOUNDS_SW_LNG=-14.655421
+PROPERTY_DEFAULT_ZOOM=18
+
+# Family invite code used on first launch. Pick a long random phrase.
+INVITE_CODE=replace-with-a-long-random-phrase
